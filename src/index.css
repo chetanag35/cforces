@@ -4,43 +4,48 @@ body {
 
 .sidenav {
   height: 100%;
-  width: 200px;
+  width: 300px;
   position: fixed;
   z-index: 1;
   top: 0;
   left: 0;
   background-color: #111;
   overflow-x: hidden;
-  padding-top: 20px;
+  padding-top: 25px;
+  text-align: center;
 }
 
 .sidenav a {
-  padding: 6px 6px 6px 32px;
+  padding: 16px 16px 16px 25px;
+  text-decoration: none;
+  font-size: 28px;
+  color: #818181;
+  display: block;
+}
+
+.sidenav a:hover {
+  color: #555;
+}
+
+
+.contest {
+  padding: 3px 3px;
+  margin-left: 70px;
+  margin-top: 5px;
   text-decoration: none;
   font-size: 25px;
   color: #818181;
   display: block;
 }
 
-.sidenav a:hover {
-  color: #f1f1f1;
-}
-
-
-.contest {
-  padding: 6px 6px 6px 32px;
-  text-decoration: none;
-  font-size: 25px;
-  color: #00f;
-  display: block;
-}
-
 ul {
   list-style-type: none;
-  margin: 0;
+  margin-left: 130px;
+  margin-top: 0px;
   padding: 0;
   overflow: hidden;
   background-color: #333;
+  display: inline;
 }
 
 li {
@@ -57,6 +62,74 @@ li a {
 
 li a:hover {
   background-color: #111;
+}
+
+a:hover{
+  background-color: #ddd
+}
+
+.split {
+  height: 100%;
+  width: 50%;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  overflow-x: hidden;
+  padding-top: 20px;
+  margin-top: 20px;
+}
+
+.leftUser{
+  left: 0;
+}
+
+.rightUser{
+  right:0
+}
+
+.centered {
+  position: absolute;
+  top: 20%;
+  left: 55%;
+  transform: translate(-40%, -50%);
+  text-align: center;
+}
+
+input[type=text] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  box-sizing: border-box;
+  border: 1px solid #555;
+  outline: none;
+  font-size: 18px;
+}
+
+input[type=text]:focus {
+  background-color: #999;
+}
+
+.button {
+  background-color: #222;
+  border: none;
+  color: white;
+  padding: 13px 25px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 15px;
+  margin: 2px 2px;
+  cursor: pointer;
+}
+
+.contestname{
+  margin: 10px;
+  padding: 5px;
+}
+
+.contestDetails{
+  margin-left: 100px;
+  padding: 5px;
 }
 
 .main {

@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Contest from './Contest' ;
+import RatingChanges from './RatingChanges'
 
 // function App() {
 //   return (
@@ -17,12 +18,18 @@ class App extends React.Component{
     constructor(){
       super()
       this.state = {
-        contest:true,
+        contest:false,
         problems: false,
         users: false,
         loading: true,
         character: "",
-        contest_category: "all"
+        contest_category: "all",
+        user1:"",
+        user1_data:"",
+        user1_contest:null,
+        user2:"",
+        user2_data:"",
+        user2_contest:""
       }
       this.handleContest = this.handleContest.bind(this)
       this.handleProblems = this.handleProblems.bind(this)
@@ -33,6 +40,11 @@ class App extends React.Component{
       this.handleDiv3 = this.handleDiv3.bind(this)
       this.handleEducational = this.handleEducational.bind(this)
       this.handleOthers = this.handleOthers.bind(this)
+      this.handleUser1 = this.handleUser1.bind(this)
+      this.handleChangeInput = this.handleChangeInput.bind(this)
+      this.handleUser2 = this.handleUser2.bind(this)
+      this.getContestList1 = this.getContestList1.bind(this)
+      this.getContestList2 = this.getContestList2.bind(this)
     }
 
     componentDidMount(){
@@ -92,6 +104,65 @@ class App extends React.Component{
         contest_category:"others"})
     }
 
+    handleUser1(){
+      this.setState({loading:true})
+
+      Promise.all([
+        fetch("https://codeforces.com/api/user.info?handles=" + this.state.user1).then(value => value.json()),
+        fetch("https://codeforces.com/api/user.rating?handle=" + this.state.user1).then(value => value.json())
+      ]).then((data)=>{
+        this.setState({
+          user1_contest:data[1],
+          user1_data:data[0],
+          loading:false
+        })
+    })
+    }
+
+    handleUser2(){
+      this.setState({loading:true})
+
+      Promise.all([
+        fetch("https://codeforces.com/api/user.info?handles=" + this.state.user2).then(response => response.json()),
+        fetch("https://codeforces.com/api/user.rating?handle=" + this.state.user2).then(response => response.json())
+      ]).then((data) =>{
+        this.setState({
+          user2_contest:data[1],
+          user2_data:data[0],
+          loading:false
+        })
+      })
+    }
+
+
+    handleChangeInput(event) {
+      const {name, value, type, checked} = event.target
+      type === "checkbox" ? this.setState({ [name]: checked }) : this.setState({ [name]: value })
+  }
+
+    getContestList1(){
+  
+      return (
+        this.state.user1_contest.result.map(item =>
+          <RatingChanges 
+          key={item.contestId} 
+          item={item}
+          />)
+      )
+    }
+
+    getContestList2(){
+
+      return (
+        this.state.user2_contest.result.map(item =>
+          <RatingChanges 
+          key={item.contestId} 
+          item={item}
+          />)
+      )
+
+    }
+
     render() {
       const text = this.state.loading ? "loading..." : ""
 
@@ -109,6 +180,15 @@ class App extends React.Component{
       contest_category={this.state.contest_category}
       /> : null)
 
+  
+      //const user1_contest_list = (this.state.loading === false && this.state.user1_contest)? 
+      // this.state.user1_contest.result.map(item =>
+      //    <RatingChanges 
+      //    key={item.contestId} 
+      //    item={item}
+      //    />):null
+    
+
       return(
           <div>
             <div className="sidenav">
@@ -120,9 +200,9 @@ class App extends React.Component{
 
             <div className="main">
               <div>{text}</div>
-              {this.state.contest === true ? 
+              {this.state.contest === true && this.state.loading === false? 
               <div>
-              <ul>
+              <ul style={{position:"fixed",verticalAlign:"middle"}}>
                 <li><a href="#all" onClick={this.handleContestAll}>ALL</a></li>
                 <li><a href="#div1" onClick={this.handleDiv1}>Div.1</a></li>
                 <li><a href="#div2" onClick={this.handleDiv2}>Div.2</a></li>
@@ -132,10 +212,110 @@ class App extends React.Component{
               </ul>
               <div style={{paddingTop:50}}>{contest_list}</div>
               </div>
-              : 
-              null}
+              : (this.state.users === true && this.state.loading === false ?
+                <div className="main">
+                  <div>{text}</div>
+            
+              
+            <div >
+              <div>
+              <h2>  Search users: </h2>
+              <input type="text" name="user1" placeholder="Enter User1 handle" value={this.state.user1} onChange={this.handleChangeInput}></input>
+              <button className="button" onClick={this.handleUser1}>Search User</button>
+              {this.state.user1_data === ""? null:
+              (this.state.user1_data.status.localeCompare("OK")? (<div>Invalid Username</div>) :<div>
+            <p>
+              handle:
+              {this.state.user1_data.result[0].handle}
+            </p>
+            <p>Name : {this.state.user1_data.result[0].firstName + " " + 
+            this.state.user1_data.result[0].lastName}</p>
+            <p>
+              Country:
+              {this.state.user1_data.result[0].country}
+            </p>
+            <p>
+              City:
+              {this.state.user1_data.result[0].city}
+            </p>
+            <p>
+              Rating:
+              {this.state.user1_data.result[0].rating + "(" + this.state.user1_data.result[0].rank + ")"} 
+            </p>
+            <p>
+              Max Rating:
+              {this.state.user1_data.result[0].maxRating + "(" + this.state.user1_data.result[0].maxRank + ")"}
+            </p>
+            <p>
+              Friends:
+              {this.state.user1_data.result[0].friendOfCount}
+            </p>
+            <p>
+                Rating Changes:
+                {this.getContestList1()}
+            </p> 
+            </div>)}
             </div>
+            </div>
+
+            
+              
+            <div>
+              <div>
+              <h2>  Search users: </h2>
+              <input type="text" name="user2" placeholder="Enter User 2 handle" value={this.state.user2} onChange={this.handleChangeInput}></input>
+              <button className="button" onClick={this.handleUser2}>Search User</button>
+              {this.state.user2_data === ""? null:
+              <div>
+            <p>
+              handle:
+              {this.state.user2_data.result[0].handle}
+            </p>
+            <p>Name : {this.state.user2_data.result[0].firstName + " " + 
+            this.state.user2_data.result[0].lastName}</p>
+            <p>
+              Country:
+              {this.state.user2_data.result[0].country}
+            </p>
+            <p>
+              City:
+              {this.state.user2_data.result[0].city}
+            </p>
+            <p>
+              Rating:
+              {this.state.user2_data.result[0].rating + "(" + this.state.user2_data.result[0].rank + ")"} 
+            </p>
+            <p>
+              Max Rating:
+              {this.state.user2_data.result[0].maxRating + "(" + this.state.user2_data.result[0].maxRank + ")"}
+            </p>
+            <p>
+              Friends:
+              {this.state.user2_data.result[0].friendOfCount}
+            </p>
+            <p>
+              Rating Changes:
+              {this.getContestList2()}
+            </p>
+            </div>}
+            </div>
+            </div>
+
+
+
+
+            </div>
+            : (this.state.problems === true && this.state.loading === false?
+              <div className ="main">
+                <div>{text}</div>
+              <h1>KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK</h1>
+
+
+                </div>
+              :null))}
+          
           </div>
+        </div>
       )
     }
 
