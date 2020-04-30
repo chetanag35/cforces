@@ -6,7 +6,7 @@ function ProblemList(props){
 
     return(
         <div style={{margin:"5px",padding:"5px"}}>
-            <a style={{textDecoration:"none",color:"#111"}} href={url}>{props.item.name}</a>
+            <a style={{textDecoration:"none",color:"#111"}} href={url} target="_blank">{props.item.name}</a>
             <span style={{float:"right"}}>{props.item.rating}</span>
             <hr/>
         </div>

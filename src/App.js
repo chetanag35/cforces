@@ -19,7 +19,7 @@ class App extends React.Component{
     constructor(){
       super()
       this.state = {
-        contest:false,
+        contest:true,
         problems: false,
         users: false,
         loading: true,
