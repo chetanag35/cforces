@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Contest from './Contest' ;
 import RatingChanges from './RatingChanges'
+import ProblemsList from './ProblemList'
 
 // function App() {
 //   return (
@@ -29,7 +30,9 @@ class App extends React.Component{
         user1_contest:null,
         user2:"",
         user2_data:"",
-        user2_contest:""
+        user2_contest:"",
+        problem_tags:"2-sat",
+        problems_result:""
       }
       this.handleContest = this.handleContest.bind(this)
       this.handleProblems = this.handleProblems.bind(this)
@@ -45,6 +48,7 @@ class App extends React.Component{
       this.handleUser2 = this.handleUser2.bind(this)
       this.getContestList1 = this.getContestList1.bind(this)
       this.getContestList2 = this.getContestList2.bind(this)
+      this.handleTags = this.handleTags.bind(this)
     }
 
     componentDidMount(){
@@ -140,6 +144,21 @@ class App extends React.Component{
       type === "checkbox" ? this.setState({ [name]: checked }) : this.setState({ [name]: value })
   }
 
+  handleTags(){
+
+      this.setState({loading:true})
+
+      fetch("https://codeforces.com/api/problemset.problems?tags=" + this.state.problem_tags)
+      .then(response => response.json())
+      .then(data =>{
+        this.setState({
+          loading:false,
+          problems_result:data
+        })
+      }
+      )
+  }
+
     getContestList1(){
   
       return (
@@ -223,7 +242,7 @@ class App extends React.Component{
               <input type="text" name="user1" placeholder="Enter User1 handle" value={this.state.user1} onChange={this.handleChangeInput}></input>
               <button className="button" onClick={this.handleUser1}>Search User</button>
               {this.state.user1_data === ""? null:
-              (this.state.user1_data.status.localeCompare("OK")? (<div>Invalid Username</div>) :<div>
+              (this.state.user1_data.result? <div>
             <p>
               handle:
               {this.state.user1_data.result[0].handle}
@@ -254,7 +273,8 @@ class App extends React.Component{
                 Rating Changes:
                 {this.getContestList1()}
             </p> 
-            </div>)}
+            </div>: (<h1 style={{float:"right"}}>Invalid Usernames
+              </h1>) )}
             </div>
             </div>
 
@@ -305,11 +325,67 @@ class App extends React.Component{
 
 
             </div>
-            : (this.state.problems === true && this.state.loading === false?
+            : this.state.loading? <div>{text}</div> :(this.state.problems === true && this.state.loading === false?
               <div className ="main">
-                <div>{text}</div>
-              <h1>KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK</h1>
+                <label>Select problem tags:</label>
+              <select
+                value={this.state.problem_tags}
+                onChange={this.handleChangeInput}
+                name="problem_tags"
+                style ={{padding:"5px",margin:"5px"}}
+              >
+                <option value="2-sat">2-sat</option>
+                <option value="binary search">binary search</option>
+                <option value="bitmasks">bitmasks</option>
+                <option value="brute force">brute force</option>
+                <option value="chinese remainder theorem">chinese remainder theorem</option>
+                <option value="combinatorics">combinatorics</option>
+                <option value="constructive algorithms">constructive algorithms</option>
+                <option value="data structures">data structures</option>
+                <option value="dfs and similar">dfs and similar</option>
+                <option value="divide and conquer">divide and conquer</option>
+                <option value="dp">dp</option>
+                <option value="dsu">dsu</option>
+                <option value="expression parsing">expression parsing</option>
+                <option value="ffft">ffft</option>
+                <option value="flows">flows</option>
+                <option value="games">games</option>
+                <option value="geometry">geometry</option>
+                <option value="graph matching">graph matching</option>
+                <option value="graphs">graphs</option>
+                <option value="greedy">greedy</option>
+                <option value="hashing">hashing</option>
+                <option value="implementation">implementation</option>
+                <option value="interactive">interactive</option>
+                <option value="math">math</option>
+                <option value="matrices">matrices</option>
+                <option value="meet-in-the-middle">meet-in-the-middle</option>
+                <option value="number theory">number theory</option>
+                <option value="probabilities">probabilities</option>
+                <option value="schedules">schedules</option>
+                <option value="shortest paths">shortest paths</option>
+                <option value="sortings">sortings</option>
+                <option value="string suffix structures">string suffix structures</option>
+                <option value="strings">strings</option>
+                <option value="ternary search">ternary search</option>
+                <option value="trees">trees</option>
+                <option value="two pointers">two pointers</option>
+              </select>
 
+              <button className="button" onClick={this.handleTags}>Search Problems</button>
+              <div>
+
+              {this.state.problems_result.status ? 
+              
+              this.state.problems_result.result.problems.map(item => (
+              <ProblemsList 
+                key={item.contestId,item.index}
+                item = {item}
+              /> ))
+              
+              :null}
+
+              </div>
 
                 </div>
               :null))}
