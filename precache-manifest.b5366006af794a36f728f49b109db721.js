@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "0e58c61769b867846fa97b5d1a810ed6",
+    "revision": "15ac803836b5e6cb25f64594ba6632a2",
     "url": "/cforces/index.html"
   },
   {
